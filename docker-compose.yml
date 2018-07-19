@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  ui: &app_base
+    networks: [dpi_network]
+    build: ui
+    ports:
+      - "3000:3000"
+      - "10000:10000"
+    depends_on:
+      - db
+    volumes:
+      - ./ui:/ui
+      - /app/node_modules
+    command: sh ./docker/start.sh
+    env_file: .env_db
+    environment:
+      - RUN_ENV=dev
+
+  db:
+    image: postgres:10.4-alpine
+    networks: [dpi_network]
+    ports:
+      - "5432:5432"
+    volumes:
+      - .pgdata:/var/lib/postgresql/data
+    env_file: .env_db
+
+networks:
+  dpi_network:
